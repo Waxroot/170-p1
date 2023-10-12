@@ -15,7 +15,22 @@ class SceneA extends Phaser.Scene {
 }
 
   create(){
-    this.graphics = this.add.graphics();
+  this.graphics = this.add.graphics();
+  const correct = this.registry.get('correct');
+  console.log('here', correct)
+  if (!this.registry.has('order1')) {
+    const order1 = {'cheese': Phaser.Math.Between(0, 2), 'lettuce': Phaser.Math.Between(0, 3)};
+    this.registry.set('order1', order1);
+    console.log('order', order1);
+}
+const order1 = this.registry.get('order1');
+
+  //const order1 = {'cheese': Phaser.Math.Between(0, 2), 'lettuce': Phaser.Math.Between(0, 3)}
+  //console.log('order', order1);
+
+  //randomized order
+  //probably declare later
+  
     this.imageObject = this.add.sprite(
       390,
       380,
@@ -30,13 +45,62 @@ class SceneA extends Phaser.Scene {
 this.imageObject.setScale(.05);
 arrow.setInteractive()
 arrow.on('pointerdown', ()=> {
+  this.registry.set('order1', order1)
   this.scene.start('intro')
 })
-  
+
+
+const text = this.add.text(420, 150, '', { fontSize: '25px', fill: '#ffffff' });
+
+    let result = '';
+    for (const key in order1) {
+        if (order1.hasOwnProperty(key)) {
+            result += ` ${order1[key]} ${key}\n `;
+        }
+    }
+    let hmmm = 'I want a burger with\n';
+
+    text.setText(hmmm + result);
+    if(correct == 1){
+    text.setAlpha(0)
+      console.log('right')
+      const text1 = this.add.text(420, 150, 'Took you long enough', { fontSize: '25px', fill: '#ffffff' });
+      this.tweens.add({
+        targets: text1,
+        alpha: 0, // Fade out text1 by reducing its alpha to 0
+        duration: 2000, // 2 seconds
+        ease: 'Linear',
+        onComplete: () => {
+          this.tweens.add({
+            targets: text,
+            alpha: 1, // Fade in text2 by increasing its alpha to 1
+            duration: 2000, // 2 seconds
+            ease: 'Linear'})
+
+        }})
+    }else if (correct == 2){
+      text.setAlpha(0)
+      const text2 = this.add.text(420, 150, 'That wasnt what I ordered!', { fontSize: '25px', fill: '#ffffff' });
+      this.tweens.add({
+        targets: text2,
+        alpha: 0, // Fade out text1 by reducing its alpha to 0
+        duration: 2000, // 2 seconds
+        ease: 'Linear',
+        onComplete: () => {
+          this.tweens.add({
+            targets: text,
+            alpha: 1, // Fade in text2 by increasing its alpha to 1
+            duration: 2000, // 2 seconds
+            ease: 'Linear'})
+
+        }})
+    }
+
    /* this.add.text(200,100,"Click to begin", {fontSize: 65, fill: '#fff2cc', fontStyle: 'italic'});
                 this.input.on('pointerdown', () => this.scene.start('intro'));
-*/
+*/this.registry.set('correct', 0);
 }
+
 update(){
   {countdown--;}
   //console.log('A', countdown)
@@ -56,7 +120,11 @@ preload(){
     
 }
 create(){
-
+  this.registry.set('correct', 0)
+  let correct = 0;
+  // Retrieve 'order1' from the registry
+  const order1 = this.registry.get('order1');
+  console.log('Order from SceneA:', order1);
   this.graphics = this.add.graphics();
   //the image objects and the number of times they have been clicked
   this.imageObjects = [];
@@ -65,10 +133,7 @@ create(){
   this.burger['cheese'] = 0;
   this.burger['lettuce'] = 0;
   //contians the ingrediatns to the burger
-  const order1 = {'cheese': Phaser.Math.Between(0, 2), 'lettuce': Phaser.Math.Between(0, 3)}
-  console.log('order', order1);
-  //randomized order
-  //probably declare later
+
   const keyboard = this.input.keyboard;
   // Create a keyboard input manager
   
@@ -86,6 +151,8 @@ let arrow = this.imageObject = this.add.image(
 this.imageObject.setScale(.05);
 arrow.setInteractive()
 arrow.on('pointerdown', ()=> {
+  is_cheese = 0
+  is_lettuce = 0
   this.scene.start('SceneA')}
 )
 
@@ -107,25 +174,31 @@ Lettuce.setScale(.2);
 Lettuce.on('pointerdown', ()=>{
   this.createImage(450, 430, 'lettuce', 0.4);
 })
+const objectsMatch = (obj1, obj2) => {
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+  if (keys1.length !== keys2.length) {
+    return false; // Objects have different numbers of keys
+  }
+  for (const key of keys1) {
+    if (obj1[key] !== obj2[key]) {
+      return false; // Values for the same key are different
+    }
+  }
+  return true;
+};
 keyboard.on('keydown-SPACE', () => {
   console.log(this.burger);
-  const objectsMatch = (obj1, obj2) => {
-    const keys1 = Object.keys(obj1);
-    const keys2 = Object.keys(obj2);
-    if (keys1.length !== keys2.length) {
-      return false; // Objects have different numbers of keys
-    }
-    for (const key of keys1) {
-      if (obj1[key] !== obj2[key]) {
-        return false; // Values for the same key are different
-      }
-    }
-    return true;
-  };
   if (objectsMatch(this.burger, order1)) {
+    correct = true;
+    this.registry.set('correct', 1);
     console.log('The objects match.');
+    const order1 = {'cheese': Phaser.Math.Between(0, 2), 'lettuce': Phaser.Math.Between(0, 3)}
+    this.registry.set('order1', order1)
+    console.log('here',correct)
   } else {
     console.log('The objects do not match.');
+    this.registry.set('correct', 2)
   }
 
 
@@ -210,7 +283,7 @@ let config = {
   width: 1000,
   height: 700,
   backgroundColor: "black",
-  scene: [Intro, SceneA],
+  scene: [SceneA,Intro],
 }
 
 let game = new Phaser.Game(config);
