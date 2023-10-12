@@ -5,6 +5,7 @@ let is_cheese = 0;
 let is_lettuce = 0;
 let burger = {};
 
+
 class SceneA extends Phaser.Scene {
   constructor() {
     super({ key: 'SceneA' });
@@ -15,38 +16,32 @@ class SceneA extends Phaser.Scene {
 }
 
   create(){
-  this.graphics = this.add.graphics();
-  const correct = this.registry.get('correct');
-  console.log('here', correct)
-  if (!this.registry.has('order1')) {
-    const order1 = {'cheese': Phaser.Math.Between(0, 2), 'lettuce': Phaser.Math.Between(0, 3)};
-    this.registry.set('order1', order1);
-    console.log('order', order1);
-}
-const order1 = this.registry.get('order1');
-
-  //const order1 = {'cheese': Phaser.Math.Between(0, 2), 'lettuce': Phaser.Math.Between(0, 3)}
-  //console.log('order', order1);
-
-  //randomized order
-  //probably declare later
+    this.graphics = this.add.graphics();
+    const correct = this.registry.get('correct');
+    console.log('here', correct)
+    if (!this.registry.has('order1')) {
+      const order1 = {'cheese': Phaser.Math.Between(0, 2), 'lettuce': Phaser.Math.Between(0, 3)};
+      this.registry.set('order1', order1);
+      console.log('order', order1);
+  }
+  const order1 = this.registry.get('order1');
   
-    this.imageObject = this.add.sprite(
-      390,
-      380,
-      'window_bkg',
-  )
-  this.imageObject.setScale(.5);
-  let arrow = this.imageObject = this.add.image(
-    800,
-    650,
-    'arrow',
+  this.imageObject = this.add.sprite(
+    390,
+    380,
+    'window_bkg',
+)
+this.imageObject.setScale(.5);
+let arrow = this.imageObject = this.add.image(
+  800,
+  650,
+  'arrow',
 )
 this.imageObject.setScale(.05);
 arrow.setInteractive()
 arrow.on('pointerdown', ()=> {
-  this.registry.set('order1', order1)
-  this.scene.start('intro')
+this.registry.set('order1', order1)
+this.scene.start('intro')
 })
 
 
@@ -91,22 +86,25 @@ const text = this.add.text(420, 150, '', { fontSize: '25px', fill: '#ffffff' });
             targets: text,
             alpha: 1, // Fade in text2 by increasing its alpha to 1
             duration: 2000, // 2 seconds
-            ease: 'Linear'})
+            ease: 'Linear'
+          });
 
-        }})
+        }
+      })
+      /* this.add.text(200,100,"Click to begin", {fontSize: 65, fill: '#fff2cc', fontStyle: 'italic'});
+                this.input.on('pointerdown', () => this.scene.start('intro'));
+*/
+this.registry.set('correct', 0);
     }
 
    /* this.add.text(200,100,"Click to begin", {fontSize: 65, fill: '#fff2cc', fontStyle: 'italic'});
                 this.input.on('pointerdown', () => this.scene.start('intro'));
-*/this.registry.set('correct', 0);
+*/
 }
-
 update(){
   {countdown--;}
-  //console.log('A', countdown)
 }
 }
-
 
 
 class Intro extends Phaser.Scene {
@@ -162,18 +160,19 @@ paper.on('pointerdown', () =>{
   this.createImage(460, 430, 'cheese', 0.4)
   }
 )
+
 let Cheese = this.imageObject = this.add.image(600,430,'cheese').setInteractive()
 Cheese.setScale(.2);
 Cheese.on('pointerdown', ()=> {
   this.createImage(440, 430, 'cheese', .2)
   //console.log('cheese count in create', is_cheese)
 })
-
 let Lettuce = this.add.image (700, 430, 'lettuce').setInteractive()
 Lettuce.setScale(.2);
 Lettuce.on('pointerdown', ()=>{
   this.createImage(450, 430, 'lettuce', 0.4);
 })
+
 const objectsMatch = (obj1, obj2) => {
   const keys1 = Object.keys(obj1);
   const keys2 = Object.keys(obj2);
@@ -201,8 +200,7 @@ keyboard.on('keydown-SPACE', () => {
     this.registry.set('correct', 2)
   }
 
-
-})
+});
 }
 
 
@@ -236,14 +234,13 @@ createImage(x, y, pic, z) {
 
   // Initialize a click count for the image
   image.clickCount = 0;
-
-  // Set a click event handler for the image
+// Set a click event handler for the image
   image.on('pointerdown', () => {
-    image.clickCount += 1;
-    if (image.clickCount >= 1) {
-      image.x = 700
-      image.y = 550
-      //console.log('Image has been clicked more than once.');
+  image.clickCount += 1;
+  if (image.clickCount >= 1) {
+    image.x = 700
+    image.y = 550
+    //console.log('Image has been clicked more than once.');
       // You can perform additional actions for multiple clicks here
       if(pic == 'cheese'){
         const keyToSearch = 'cheese'; // Change this to the key you want to search
@@ -252,7 +249,7 @@ createImage(x, y, pic, z) {
         is_cheese --
         this.burger['cheese'] = is_cheese;
         }
-        
+
         //console.log('trash',is_cheese)
       } else if (pic == 'lettuce'){
         const keyToSearch = 'lettuce';
@@ -268,14 +265,14 @@ createImage(x, y, pic, z) {
   
   })
     this.imageObjects.push(image);
-  }
+}
 
-update(){
+  update(){
   {countdown--;}
   //console.log('B', countdown)
   
-}}
-
+}
+}
 
 
 let config = {
