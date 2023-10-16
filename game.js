@@ -319,9 +319,9 @@ const text = this.add.text(420, 150, '', { fontSize: '25px', fill: 'black' });
     }else if (customerCount >= 3 && customerCount < 5){
       countdown = 400
     }else if (customerCount >= 5 && customerCount < 7){
-      countdown = 300
+      countdown = 460
     }else if (customerCount >= 7){
-      countdown = 300
+      countdown = 460
     }
 
 
